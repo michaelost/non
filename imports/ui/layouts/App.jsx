@@ -4,13 +4,14 @@ import { Meteor } from 'meteor/meteor';
 import Home from '../components/Home';
 import Login from '../components/Login';
 import App from '../components/Login';
+import PrivateRoute from '../components/PrivateRoute.jsx';
 
 const Main = appProps => (
   <Router>
     <Switch>
       <Route exact path="/" component={App} />
       <Route path="/login" component={Login} />
-      <Route path="/home" component={Home} />
+      <PrivateRoute path="/home" component={Home}/>
     </Switch>
   </Router>
 );
@@ -20,4 +21,3 @@ App.propTypes = {
 };
 
 export default Main;
-
