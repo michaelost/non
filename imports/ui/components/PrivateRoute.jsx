@@ -5,7 +5,9 @@ import {
   Redirect,
 } from 'react-router-dom'
 
-const PrivateRoute = ({ component: Component, isAuthenticated, ...params }) => (
+const PrivateRoute = ({ component: Component, isAuthenticated, ...params }) =>{
+  console.log(params)
+  return (
   <Route {...params} render={props => (
     isAuthenticated ? (
       <Component {...props}/>
@@ -16,6 +18,6 @@ const PrivateRoute = ({ component: Component, isAuthenticated, ...params }) => (
       }}/>
     )
   )}/>
-)
+)}
 
 export default PrivateRoute;
