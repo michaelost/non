@@ -44,16 +44,14 @@ export default class Register extends Component {
     }
     
     // temporary
-    this.showSuccessMessage();
-    return
     Meteor.call('registerNewUser', userObject, (err, res) => {
-      if (err) { this.setState({ err }); return; }
+      if (err) { this.setState({ err: err.reason }); return; }
       this.showSuccessMessage(); 
     });
   }
 
   showSuccessMessage() {
-    this.setState({ success: true }) 
+    this.setState({ success: true, err: null }) 
     setTimeout(()=> {
       this.setState({ success: false }) 
     }, 3000)
@@ -85,7 +83,7 @@ export default class Register extends Component {
   render() {
     const { success, err, logosNames = [], showIconSelect, selectedIcon, userRole } = this.state;
     if (success) {
-      return (<PageHeader>User with email  has been successfully registered</PageHeader>);
+      return (<PageHeader>you have been successfully registered </PageHeader>);
     }
     return (
       <div className="Login">
