@@ -1,0 +1,128 @@
+import React, { Component } from "react";
+import { Button, FormGroup, FormControl, ControlLabel, Panel, Row, Col, Grid } from "react-bootstrap";
+import { Meteor } from 'meteor/meteor';
+
+export default class Register extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: "",
+      password: "",
+      logosNames: [],
+      showIconSelect: false,
+      selectedIcon: '',
+      userRole: 'donor',
+    };
+    this.toggleIconSelect = this.toggleIconSelect.bind(this);
+    this.changeUserRole = this.changeUserRole.bind(this);
+    this.selectCompanyIcon = this.selectCompanyIcon.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentWillMount() {
+    Meteor.call('icons.getIconNames', (err, res) => {
+      if (res) this.setState({ logosNames: res }); 
+    });
+  }
+
+  handleChange(e) {
+    debugger; 
+    this.setState({[e.target.id]: e.target.value});
+  }
+
+  handleSubmit(e) {
+    debugger; 
+  }
+
+  changeUserRole(e) {
+    const userRole = e.target.value;
+    this.setState({ userRole });
+  }
+
+  toggleIconSelect() {
+    const { showIconSelect } = this.state; 
+    this.setState({ showIconSelect: !showIconSelect });
+  }
+
+  selectCompanyIcon(icon) {
+    this.setState({ selectedIcon: icon }); 
+    this.toggleIconSelect();
+  }
+
+  validateForm() {
+    const { userRole, selectedIcon, email, password } = this.state; 
+
+  }
+
+  render() {
+    const { logosNames = [], showIconSelect, selectedIcon, userRole } = this.state;
+    return (
+      <div className="Login">
+        <form onSubmit={this.handleSubmit}>
+          <FormGroup controlId="email" bsSize="large">
+            <ControlLabel>Email</ControlLabel>
+            <FormControl
+              autoFocus
+              type="email"
+              value={this.state.email}
+              onChange={this.handleChange}
+            />
+          </FormGroup>
+          {userRole == 'organization' && 
+            <FormGroup controlId="companyName" bsSize="large">
+              <ControlLabel>Company name</ControlLabel>
+              <FormControl
+                value={this.state.companyName}
+                onChange={this.handleChange}
+              />
+            </FormGroup>
+          }
+          <FormGroup controlId="password" bsSize="large">
+            <ControlLabel>Password</ControlLabel>
+            <FormControl
+              value={this.state.password}
+              onChange={this.handleChange}
+              type="password"
+            />
+          </FormGroup>
+          <FormControl componentClass="select" placeholder="donor" onChange={(e) => {this.changeUserRole(e) }}>
+            <ControlLabel>User role</ControlLabel>
+            <option value="donor">donor</option>
+            <option value="organization">organization</option>
+          </FormControl>
+          {userRole == 'organization' && 
+            (<FormGroup>
+              <div style={{display: 'inline-block', width: 70}}>
+                { selectedIcon && <img style={{width: 40}} src={Meteor.absoluteUrl() + 'icons/' + selectedIcon } /> }
+              </div>
+              <Button onClick={ ()=> this.toggleIconSelect() }>
+                select company logo
+              </Button>
+               {showIconSelect && 
+                <Panel collapsible expanded={true}>
+                  {logosNames.map(l => (
+                    <div
+                      style={{display: 'inline-block', width: 40, float: 'left', border: '1px solid black', margin: 4 }}
+                      onClick={() => { this.selectCompanyIcon(l) }}>
+                        <img style={{width: 40}} src={Meteor.absoluteUrl() + 'icons/' + l} />
+                    </div>
+                  ))}
+                </Panel>
+               }
+            </FormGroup>)
+          }
+          <Button
+            block
+            bsSize="large"
+            disabled={!this.validateForm()}
+            type="submit"
+          >
+            Register
+          </Button>
+        </form>
+      </div>
+    );
+  }
+}
