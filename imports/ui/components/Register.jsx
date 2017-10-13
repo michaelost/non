@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel, Panel, Row, Col, Grid } from "react-bootstrap";
+import { PageHeader, Button, FormGroup, FormControl, ControlLabel, Panel, Row, Col, Grid } from "react-bootstrap";
 import { Meteor } from 'meteor/meteor';
 
 export default class Register extends Component {
@@ -13,6 +13,8 @@ export default class Register extends Component {
       showIconSelect: false,
       selectedIcon: '',
       userRole: 'donor',
+      err: null,
+      success: false,
     };
     this.toggleIconSelect = this.toggleIconSelect.bind(this);
     this.changeUserRole = this.changeUserRole.bind(this);
@@ -28,12 +30,33 @@ export default class Register extends Component {
   }
 
   handleChange(e) {
-    debugger; 
     this.setState({[e.target.id]: e.target.value});
   }
 
   handleSubmit(e) {
-    debugger; 
+    e.preventDefault();
+    e.stopPropagation();
+    const { userRole, selectedIcon, email, password, companyName } = this.state; 
+    const userObject = { userRole, email, password };
+    if (userRole == 'organization') {
+      userObject.selectedIcon = selectedIcon;
+      userObject.companyName = companyName;
+    }
+    
+    // temporary
+    this.showSuccessMessage();
+    return
+    Meteor.call('registerNewUser', userObject, (err, res) => {
+      if (err) { this.setState({ err }); return; }
+      this.showSuccessMessage(); 
+    });
+  }
+
+  showSuccessMessage() {
+    this.setState({ success: true }) 
+    setTimeout(()=> {
+      this.setState({ success: false }) 
+    }, 3000)
   }
 
   changeUserRole(e) {
@@ -52,14 +75,26 @@ export default class Register extends Component {
   }
 
   validateForm() {
-    const { userRole, selectedIcon, email, password } = this.state; 
-
+    const { userRole, selectedIcon, email, password, companyName } = this.state; 
+    const properEmail = /\S+@\S+\.\S+/.test(email);
+    const properPassword = password.length > 5;
+    if (userRole === 'organization' && (!selectedIcon || !companyName)) return false; 
+    if (properEmail && properPassword) return true;
   }
 
   render() {
-    const { logosNames = [], showIconSelect, selectedIcon, userRole } = this.state;
+    const { success, err, logosNames = [], showIconSelect, selectedIcon, userRole } = this.state;
+    if (success) {
+      return (<PageHeader>User with email  has been successfully registered</PageHeader>);
+    }
     return (
       <div className="Login">
+        
+        {err &&<Panel header="error" bsStyle="danger">
+          {err}
+        </Panel>
+        }
+
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="email" bsSize="large">
             <ControlLabel>Email</ControlLabel>
