@@ -5,7 +5,8 @@ import { composeWithTracker } from 'react-komposer';
 
 import Home from '../components/Home';
 import Login from '../components/Login';
-import App from '../components/Login';
+import Register from '../components/Register';
+import App from '../components/App';
 import PrivateRoute from '../components/PrivateRoute.jsx';
 
 const Main = appProps => (
@@ -13,6 +14,7 @@ const Main = appProps => (
     <Switch>
       <Route exact path="/" component={App} {...appProps} />
       <Route path="/login" component={Login}  {...appProps} />
+      <Route path="/signup" component={Register}  {...appProps} />
       <PrivateRoute path="/home" component={Home} {...appProps} />
     </Switch>
   </Router>
