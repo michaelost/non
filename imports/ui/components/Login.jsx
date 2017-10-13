@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { ListGroup, ListGroupItem, Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Meteor } from 'meteor/meteor';
 
 export default class Login extends Component {
   constructor(props) {
@@ -7,8 +8,10 @@ export default class Login extends Component {
 
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      err: null,
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   validateForm() {
@@ -23,11 +26,30 @@ export default class Login extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    event.stopPropagation();
+    const { email, password } = this.state; 
+    Meteor.loginWithPassword(email, password, (err)=> {
+      if (err) { 
+        this.setState({ err: err.reason });
+      }
+    });     
   }
 
+  validateForm() {
+    const { email, password } = this.state; 
+    const properEmail = /\S+@\S+\.\S+/.test(email);
+    const properPassword = password.length > 5;
+    if (properEmail && properPassword) return true;
+  }
   render() {
+    const { err } = this.state;
     return (
       <div className="Login">
+        {err &&
+          <ListGroup>
+            <ListGroupItem bsStyle="danger">{err}</ListGroupItem>
+          </ListGroup>
+        }
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="email" bsSize="large">
             <ControlLabel>Email</ControlLabel>
