@@ -23,3 +23,4 @@ accounts-password
 react-meteor-data
 aldeed:simple-schema
 check
+aldeed:collection2

@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import fs from 'fs';
+import { Accounts } from 'meteor/accounts-base';
 
 Meteor.methods({
   'icons.getIconNames'() {
@@ -14,6 +15,7 @@ Meteor.methods({
      });
   },
   'registerNewUser'({ userRole, companyName, selectedIcon, password, email }) {
+    console.log(email);
      new SimpleSchema({
        companyName: { type: String, optional: true },
        selectedIcon: { type: String, optional: true },
@@ -21,10 +23,16 @@ Meteor.methods({
        password: { type: String },
        email: { type: String },
      }).validate({ userRole, companyName, selectedIcon, password, email });
+    console.log('!');
      const user = Meteor.users.findOne({ email })
      if (user) throw new Meteor.Error('error', `user with email ${email} already exists`);
      const userObj = { userRole, companyName, selectedIcon, password, email };
-     const newUser = Meteor.users.insert(userObj);
+     const newUser = Accounts.createUser({
+       username: email.split("@")[0],
+       email,
+       password,
+       profile: userObj,
+     });
      if (newUser) return true; 
   }
 })
