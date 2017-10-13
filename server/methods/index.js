@@ -12,5 +12,19 @@ Meteor.methods({
          resolve(items);
        });       
      });
-  } 
+  },
+  'registerNewUser'({ userRole, companyName, selectedIcon, password, email }) {
+     new SimpleSchema({
+       companyName: { type: String, optional: true },
+       selectedIcon: { type: String, optional: true },
+       userRole: { type: String },
+       password: { type: String },
+       email: { type: String },
+     }).validate({ userRole, companyName, selectedIcon, password, email });
+     const user = Meteor.users.findOne({ email })
+     if (user) throw new Meteor.Error('error', `user with email ${email} already exists`);
+     const userObj = { userRole, companyName, selectedIcon, password, email };
+     const newUser = Meteor.users.insert(userObj);
+     if (newUser) return true; 
+  }
 })
