@@ -13,7 +13,9 @@ import {
 } from "react-bootstrap";
 
 import { Meteor } from 'meteor/meteor';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+
+
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -40,7 +42,7 @@ export default class Login extends Component {
     event.preventDefault();
     event.stopPropagation();
     const { email, password } = this.state; 
-    Meteor.loginWithPassword(email, password, (err)=> {
+    Meteor.loginWithPassword(email , password, (err)=> {
       if (err) { 
         this.setState({ err: err.reason });
       }
@@ -55,6 +57,9 @@ export default class Login extends Component {
   }
   render() {
     const { err } = this.state;
+     if (Meteor.user()) {
+       return <Redirect to='/'/>;
+     }
     return (
       <div className="Login">
         {err &&

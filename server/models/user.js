@@ -8,6 +8,17 @@ const UserSchema = new SimpleSchema({
     type: Object,
     optional: true,
     blackbox: true
+  },
+  createdAt: {
+    type: Date,
+  },
+  services: {
+    type: Object,
+    blackbox: true
+  },
+  emails: {
+    type: [Object],
+    blackbox: true
   }
 });
 

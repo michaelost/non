@@ -12,7 +12,7 @@ import PrivateRoute from '../components/PrivateRoute.jsx';
 const Main = appProps => (
   <Router>
     <Switch>
-      <Route exact path="/" component={App} {...appProps} />
+      <PrivateRoute exact path="/" component={App} {...appProps} />
       <Route path="/login" component={Login}  {...appProps} />
       <Route path="/signup" component={Register}  {...appProps} />
       <PrivateRoute path="/home" component={Home} {...appProps} />
