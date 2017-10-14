@@ -1,6 +1,6 @@
 import { withTracker } from 'meteor/react-meteor-data';
 import React, { Component, PropTypes } from 'react';
- import { 
+import { 
   Nav, 
   NavItem, 
   PageHeader, 
@@ -25,14 +25,16 @@ class NonProfits extends Component {
   constructor(props) {
     super(props); 
     this.state = {
-      rankedList: {},
+      err: null,
     }
     this.onDelete = this.onDelete.bind(this);
     this.handleChanges = this.handleChange.bind(this);
+    this.saveList = this.saveList.bind(this);
   }
 
   componentDidMount() {
     const { rankedList } = this.props;
+    debugger;
     this.setState({ rankedList });
   }
 
@@ -41,20 +43,21 @@ class NonProfits extends Component {
     const list = rankedList.list.filter(el => (el !== id))
     debugger;
     rankedList.list = list;
-    this.setState({ rankedList: Object.assign({}, rankedList) });
+    this.setState({ rankedList: Object.assign({}, rankedList), err: null });
   }
 
   componentWillReceiveProps(newProps) {
-    const { rankedList } = newProps;
-    if (rankedList && rankedList.list) {
-        this.setState({ rankedList: newProps.rankedList }); 
+    const { rankedList, nonProfits } = newProps;
+    const stateObj = {};
+    if (!this.state.addToTopElement && nonProfits && nonProfits.length) {
+      stateObj.addToTopElement = nonProfits[0]._id
     }
+    if (rankedList && rankedList.list) {
+        stateObj.rankedList = newProps.rankedList;
+    }
+    this.setState(stateObj)
   }
 
-  componentWillRecieveNewProps() {
-    this.setState({ rankedList: this.props.rankedList })
-  }
- 
   handleChange = event => {
     debugger;
     this.setState({
@@ -63,24 +66,41 @@ class NonProfits extends Component {
   } 
 
   addToTop() {
-    const { addToTopElement, rankedList } = this.state; 
-    const list = rankedList.list.concat([addToTopElement]);
+    const { addToTopElement } = this.state; 
+    let { rankedList } = this.state;
+    const list = (rankedList && rankedList.list || []).concat([addToTopElement]);
+    if (!rankedList) {
+      rankedList = { userId: Meteor.userId() } 
+    }
     rankedList.list = list;
-    this.setState({ rankedList: Object.assign({}, rankedList ), addToTopElement: null });   
+    this.setState({ rankedList: Object.assign({}, rankedList ), addToTopElement: null, err: null, });   
+  }
+
+  saveList() {
+    const { rankedList } = this.state;
+    Meteor.call('updateRankedList', rankedList,  function (err, res) {
+      if (err) { this.setState({err}) }
+    })
   }
 
   renderRankedList() {
     const { nonProfits, currentUser } = this.props; 
-    const { rankedList } = this.state;
+    const { rankedList, err } = this.state;
 
-    if (rankedList && rankedList.list) {
+    if (true) {
       debugger;
-      const notInList = nonProfits.filter(np => (rankedList.list.indexOf(np._id) === -1));
+      const rList = rankedList && rankedList.list || []; 
+      const notInList = nonProfits.filter(np => (rList.indexOf(np._id) === -1));
       return ( 
         <div>
+        {err &&
+          <ListGroup>
+            <ListGroupItem bsStyle="danger">{err}</ListGroupItem>
+          </ListGroup>
+        }
           <h1> Your top ranked list or non profin organizations: </h1>
           <ListGroup componentClass="ul">
-             {rankedList.list.map(npId => {
+             {rList.map(npId => {
                const currentNonProfit = nonProfits.filter((pr) => (pr._id === npId))[0];
                const { companyName, selectedIcon } = currentNonProfit && currentNonProfit.profile || {};
                return <EditableNonProfitItem
@@ -91,7 +111,7 @@ class NonProfits extends Component {
                       />
              })}
           </ListGroup>
-        {rankedList.list.length < 5 && (
+        {rList.length < 5 && (
           <FormGroup controlId="addToTopElement">
             <ControlLabel>Add non profit organization to your top</ControlLabel>
             <FormControl 
@@ -108,6 +128,7 @@ class NonProfits extends Component {
           <Button onClick={()=>{ this.addToTop() }} bsStyle="info">add To TOP</Button>
           </FormGroup>         
         )}
+          <Button onClick={()=>{ this.saveList() }} bsStyle="success">save list</Button>
         </div>
       );
     }
