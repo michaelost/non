@@ -1,7 +1,19 @@
 import React, { Component } from "react";
-import { ListGroup, ListGroupItem, Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import { Meteor } from 'meteor/meteor';
+import { 
+  Col, 
+  Row, 
+  Nav, 
+  NavItem, 
+  ListGroup,
+  ListGroupItem, 
+  Button, 
+  FormGroup, 
+  FormControl, 
+  ControlLabel 
+} from "react-bootstrap";
 
+import { Meteor } from 'meteor/meteor';
+import { Link } from 'react-router-dom';
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -77,6 +89,17 @@ export default class Login extends Component {
             Login
           </Button>
         </form>
+        <Row className="show-grid">
+          <Col xs={6} md={4}></Col>
+          <Col xs={6} md={4}>
+            <Nav bsStyle="pills" activeKey={2}>
+              <NavItem eventKey={1}><Link to="/signup">Sign Up</Link></NavItem>
+              <NavItem eventKey={2}><Link style={{color: 'white'}} to="/login">Login</Link></NavItem>
+            </Nav>            
+          </Col>
+          <Col xsHidden md={4}></Col>
+        </Row>
+
       </div>
     );
   }

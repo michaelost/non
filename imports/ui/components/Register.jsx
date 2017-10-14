@@ -1,5 +1,19 @@
 import React, { Component } from "react";
-import { PageHeader, Button, FormGroup, FormControl, ControlLabel, Panel, Row, Col, Grid } from "react-bootstrap";
+import { 
+  Nav, 
+  NavItem, 
+  PageHeader, 
+  Button, 
+  FormGroup, 
+  FormControl, 
+  ControlLabel, 
+  Panel, 
+  Row, 
+  Col, 
+  Grid 
+} from "react-bootstrap";
+
+import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 
 export default class Register extends Component {
@@ -155,6 +169,18 @@ export default class Register extends Component {
             Register
           </Button>
         </form>
+        <Row className="show-grid">
+          <Col xs={6} md={4}></Col>
+          <Col xs={6} md={4}>
+            <Nav bsStyle="pills" activeKey={1}>
+              <NavItem eventKey={1}><Link style={{color: 'white'}}  to="/signup">Sign Up </Link></NavItem>
+              <NavItem eventKey={2}><Link to="/login">Login </Link></NavItem>
+            </Nav>            
+          </Col>
+          <Col xsHidden md={4}></Col>
+        </Row>
+
+
       </div>
     );
   }
