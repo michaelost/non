@@ -62,6 +62,10 @@ export default class Login extends Component {
      }
     return (
       <div className="Login">
+        <Nav bsStyle="pills" activeKey={2}>
+          <NavItem eventKey={1}><Link to="/signup">Sign Up</Link></NavItem>
+          <NavItem eventKey={2}><Link style={{color: 'white'}} to="/login">Login</Link></NavItem>
+        </Nav>            
         {err &&
           <ListGroup>
             <ListGroupItem bsStyle="danger">{err}</ListGroupItem>
@@ -94,17 +98,6 @@ export default class Login extends Component {
             Login
           </Button>
         </form>
-        <Row className="show-grid">
-          <Col xs={6} md={4}></Col>
-          <Col xs={6} md={4}>
-            <Nav bsStyle="pills" activeKey={2}>
-              <NavItem eventKey={1}><Link to="/signup">Sign Up</Link></NavItem>
-              <NavItem eventKey={2}><Link style={{color: 'white'}} to="/login">Login</Link></NavItem>
-            </Nav>            
-          </Col>
-          <Col xsHidden md={4}></Col>
-        </Row>
-
       </div>
     );
   }
