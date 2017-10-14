@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import fs from 'fs';
 import { Accounts } from 'meteor/accounts-base';
+import RankedList from '/imports/lib/collections/rankedList/rankedlist.js';
 
 Meteor.methods({
   'icons.getIconNames'() {
@@ -14,6 +15,7 @@ Meteor.methods({
        });       
      });
   },
+
   'registerNewUser'({ userRole, companyName, selectedIcon, password, email }) {
     console.log(email);
      new SimpleSchema({
@@ -34,5 +36,23 @@ Meteor.methods({
        profile: userObj,
      });
      if (newUser) return true; 
+  },
+
+  'updateRankedList'({ userId, list }) {
+    new SimpleSchema({
+      userId: { type: String },
+      list: { type: [String], blackbox: true }
+    }).validate({ userId, list })
+    const user = Meteor.users.findOne(userId) 
+    if (user.rankedList) {
+      const query = { _id: user.rankedList };
+      const projection = { $set: { list }};
+      RankedList.update(query, projection); 
+    } else {
+      const rankedList = RankedList.insert({userId, list }); 
+      Meteor.users.update({ _id: userId }, { $set: { rankedList } });
+    }
+
   }
+
 })

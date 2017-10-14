@@ -19,7 +19,11 @@ const UserSchema = new SimpleSchema({
   emails: {
     type: [Object],
     blackbox: true
-  }
+  },
+  rankedList: {
+    type: String,
+    optional: true,
+  },
 });
 
 Meteor.users.attachSchema(UserSchema);

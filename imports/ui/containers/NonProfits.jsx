@@ -22,8 +22,15 @@ class NonProfits extends Component {
     super(props); 
   }
 
+  renderRankedList() {
+    const { currentUser } = this.props; 
+    if (currentUser.rankedList) {
+    
+    }
+  }
+
   render() {
-    const { nonProfits } = this.props;
+    const { nonProfits }  = this.props;
     return (
       <div>
         <h1> List of non profit organizations: </h1>
@@ -33,6 +40,7 @@ class NonProfits extends Component {
              return <NonProfitItem companyName={companyName} selectedIcon={selectedIcon} />
            })}
         </ListGroup>
+        {this.renderRankedList}
       </div>
     );
   }
