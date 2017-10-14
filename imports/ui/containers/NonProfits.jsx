@@ -9,7 +9,10 @@ import React, { Component, PropTypes } from 'react';
   Row, 
   Col, 
   Grid,
-  ListGroup
+  ListGroup,
+  FormGroup,
+  FormControl,
+  ControlLabel,
 } from "react-bootstrap";
 
 import NonProfitItem from '../components/NonProfitItem.jsx';
@@ -25,6 +28,7 @@ class NonProfits extends Component {
       rankedList: {},
     }
     this.onDelete = this.onDelete.bind(this);
+    this.handleChanges = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -50,11 +54,28 @@ class NonProfits extends Component {
   componentWillRecieveNewProps() {
     this.setState({ rankedList: this.props.rankedList })
   }
+ 
+  handleChange = event => {
+    debugger;
+    this.setState({
+      [event.target.id]: event.target.value
+    });
+  } 
+
+  addToTop() {
+    const { addToTopElement, rankedList } = this.state; 
+    const list = rankedList.list.concat([addToTopElement]);
+    rankedList.list = list;
+    this.setState({ rankedList: Object.assign({}, rankedList ), addToTopElement: null });   
+  }
 
   renderRankedList() {
     const { nonProfits, currentUser } = this.props; 
     const { rankedList } = this.state;
+
     if (rankedList && rankedList.list) {
+      debugger;
+      const notInList = nonProfits.filter(np => (rankedList.list.indexOf(np._id) === -1));
       return ( 
         <div>
           <h1> Your top ranked list or non profin organizations: </h1>
@@ -70,6 +91,23 @@ class NonProfits extends Component {
                       />
              })}
           </ListGroup>
+        {rankedList.list.length < 5 && (
+          <FormGroup controlId="addToTopElement">
+            <ControlLabel>Add non profit organization to your top</ControlLabel>
+            <FormControl 
+              componentClass="select"
+              placeholder="select"
+              onChange={(event) => {this.handleChange(event)}}>
+                {notInList.map(el => {
+                  return (<option value={el._id}>
+                            {el.profile.companyName}
+                          </option>)
+
+                })} 
+            </FormControl>
+          <Button onClick={()=>{ this.addToTop() }} bsStyle="info">add To TOP</Button>
+          </FormGroup>         
+        )}
         </div>
       );
     }
