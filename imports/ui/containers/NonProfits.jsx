@@ -85,11 +85,9 @@ class NonProfits extends Component {
       rankedList = { userId: Meteor.userId() } 
     }
     rankedList.list = list;
-//
     const rList = rankedList && rankedList.list;
     const notInList = nonProfits.filter(np => (rList.indexOf(np._id) === -1));
     addToTopElement =  (notInList && notInList[0]._id) || null
-//
     this.setState({ rankedList: Object.assign({}, rankedList ), addToTopElement, err: null, });   
   }
 
@@ -144,9 +142,10 @@ class NonProfits extends Component {
 
                 })} 
             </FormControl>
-          <Button onClick={()=>{ this.addToTop() }} bsStyle="info">add To TOP</Button>
+
           </FormGroup>         
         )}
+          <Button onClick={()=>{ this.addToTop() }} bsStyle="info">add To TOP</Button>
           <Button onClick={()=>{ this.saveList() }} bsStyle="success">save list</Button>
         </div>
       );

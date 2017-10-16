@@ -25,6 +25,7 @@ export default class EditableNonProfitItem extends Component {
 
   componentWillReceiveProps(newProps) {
     const { currentPosition } = newProps;
+    debugger;
     if (currentPosition) { 
       this.setState({ position: currentPosition }); 
     }
