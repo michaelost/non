@@ -66,14 +66,20 @@ class NonProfits extends Component {
   } 
 
   addToTop() {
-    const { addToTopElement } = this.state; 
+    let { addToTopElement } = this.state; 
+    const { nonProfits } = this.props;
     let { rankedList } = this.state;
     const list = (rankedList && rankedList.list || []).concat([addToTopElement]);
     if (!rankedList) {
       rankedList = { userId: Meteor.userId() } 
     }
     rankedList.list = list;
-    this.setState({ rankedList: Object.assign({}, rankedList ), addToTopElement: null, err: null, });   
+//
+    const rList = rankedList && rankedList.list;
+    const notInList = nonProfits.filter(np => (rList.indexOf(np._id) === -1));
+    addToTopElement =  (notInList && notInList[0]._id) || null
+//
+    this.setState({ rankedList: Object.assign({}, rankedList ), addToTopElement, err: null, });   
   }
 
   saveList() {
