@@ -30,11 +30,23 @@ class NonProfits extends Component {
     this.onDelete = this.onDelete.bind(this);
     this.handleChanges = this.handleChange.bind(this);
     this.saveList = this.saveList.bind(this);
+    this.changePosition = this.changePosition.bind(this);
   }
 
   componentDidMount() {
     const { rankedList } = this.props;
     debugger;
+    this.setState({ rankedList });
+  }
+
+  changePosition(p1, p2) {
+    console.log(p1,p2);
+    const { rankedList } = this.state; 
+    const list = rankedList.list;
+    const swap = list[p1]; 
+    list[p1] = list[p2];
+    list[p2] = swap;
+    rankedList.list = list;
     this.setState({ rankedList });
   }
 
@@ -59,7 +71,6 @@ class NonProfits extends Component {
   }
 
   handleChange = event => {
-    debugger;
     this.setState({
       [event.target.id]: event.target.value
     });
@@ -94,7 +105,6 @@ class NonProfits extends Component {
     const { rankedList, err } = this.state;
 
     if (true) {
-      debugger;
       const rList = rankedList && rankedList.list || []; 
       const notInList = nonProfits.filter(np => (rList.indexOf(np._id) === -1));
       return ( 
@@ -106,10 +116,13 @@ class NonProfits extends Component {
         }
           <h1> Your top ranked list or non profin organizations: </h1>
           <ListGroup componentClass="ul">
-             {rList.map(npId => {
+             {rList.map((npId, index) => {
                const currentNonProfit = nonProfits.filter((pr) => (pr._id === npId))[0];
                const { companyName, selectedIcon } = currentNonProfit && currentNonProfit.profile || {};
                return <EditableNonProfitItem
+                         rLength={rList.length}
+                         currentPosition={index}
+                         changePosition={this.changePosition}
                          companyName={companyName}
                          selectedIcon={selectedIcon} 
                          onDelete={this.onDelete}
